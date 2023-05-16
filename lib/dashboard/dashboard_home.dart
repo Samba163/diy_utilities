@@ -1,3 +1,4 @@
+import 'package:diy_utilities/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import '../functions/navigate.dart';
@@ -44,6 +45,12 @@ class _MyDashboardState extends State<MyDashboard> {
     } else {
       print('Scan canceled by the user');
     }
+  }
+
+  @override
+  void initState() {
+    debugPrint(userData.toString());
+    super.initState();
   }
 
   @override
