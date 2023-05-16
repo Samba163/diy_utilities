@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:diy_utilities/dashboard/dashboard_home.dart';
 import 'package:diy_utilities/pages/authentication/login.dart';
 import 'package:diy_utilities/services/read_data.dart';
@@ -25,19 +24,23 @@ class _LoadingPageState extends State<LoadingPage> {
     // TODO: implement initState
     // FirebaseAuth.instance.signOut();
     super.initState();
-    Timer(const Duration(seconds: 5), () {
-      globalUID = FirebaseAuth.instance.currentUser!.uid;
-      nav.pushAndReplace(context, const LoginPage());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Timer(const Duration(seconds: 5), () {
+        globalUID = FirebaseAuth.instance.currentUser == null
+            ? ''
+            : FirebaseAuth.instance.currentUser!.uid;
+        nav.pushAndReplace(context, const LoginPage());
 
-      // if (globalUID.toString() != "null" || globalUID.length > 5) {
-      //   // readData.
-      //   getUserData(context, globalUID);
-      //   nav.pushAndReplace(context, const MyDashboard());
-      // } else {
-      //   //Navigator.pushReplacementNamed(context, 'login');
-      //   nav.pushAndReplace(context, const LoginPage());
-      //   debugPrint("step3:");
-      // }
+        if (globalUID.isNotEmpty || globalUID.length > 5) {
+          // readData.
+          getUserData(context, globalUID);
+          nav.pushAndReplace(context, const MyDashboard());
+        } else {
+          //Navigator.pushReplacementNamed(context, 'login');
+          nav.pushAndReplace(context, const LoginPage());
+          debugPrint("step3:");
+        }
+      });
     });
   }
 
@@ -53,17 +56,19 @@ class _LoadingPageState extends State<LoadingPage> {
       var data = await db.collection("users").doc(UID).get();
       if (data.exists) {
         debugPrint("getUserData 1:${data.data().toString()}");
-        setState(() {
-          userData = data.data()!;
-        });
+        // if (mounted) {
+        //   setState(() {
+        userData = data.data()!;
         debugPrint("getUserData2: ${userData.toString()}");
+        //   });
+        // }
       } else {
         FirebaseAuth.instance.signOut().whenComplete(() {
           nav.pushAndReplace(context, const LoginPage());
         });
       }
     } catch (e) {
-      debugPrint("notgetUserData: $e");
+      debugPrint("notgetUserData: error  $e");
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:pinput/pinput.dart';
 import 'dart:async';
 
 import '../../constants/constants.dart';
+import '../../dashboard/dashboard_home.dart';
 import '../../main.dart';
 import 'login.dart';
 
@@ -201,7 +202,8 @@ class _MyOtpState extends State<MyOtp> {
 
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => MyApp()),
+                        MaterialPageRoute(
+                            builder: (context) => const MyDashboard()),
                         (route) => false,
                       );
                     } catch (e) {

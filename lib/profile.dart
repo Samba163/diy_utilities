@@ -1,10 +1,15 @@
+import 'package:diy_utilities/pages/authentication/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'dart:io';
+import 'functions/navigate.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -13,6 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   DateTime? selectedDate;
   ImagePicker picker = ImagePicker();
   XFile? selectedImage;
+
+  Navigation nav = Navigation();
 
   @override
   void dispose() {
@@ -70,6 +77,17 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void _logout() {
+    // Perform logout logic
+    // ...
+
+    // Navigate to the login page
+    Navigator.pushReplacementNamed(context, 'login');
+    FirebaseAuth.instance.signOut().whenComplete(() {
+      nav.pushAndReplace(context, const LoginPage());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -79,6 +97,12 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Scaffold(
           appBar: AppBar(
             title: Text('Profile Page'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () => _logout(),
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -133,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  Text(
+                  const Text(
                     'Date of Birth',
                     style: TextStyle(
                       fontSize: 20,
