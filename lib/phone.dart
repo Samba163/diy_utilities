@@ -1,3 +1,4 @@
+import 'package:diy_utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -83,14 +84,17 @@ class _MyPhoneState extends State<MyPhone> {
                 ),
                 Expanded(
                   child: TextField(
-                    keyboardType: TextInputType.phone,
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
                     onChanged: (value) {
                       phone = value;
                       checkButtonEnabled();
                     },
-                    decoration: InputDecoration(
+                    textAlign: TextAlign.center,
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "Enter phone number",
+                      counterText: "",
                     ),
                   ),
                 ),
@@ -104,6 +108,9 @@ class _MyPhoneState extends State<MyPhone> {
             child: ElevatedButton(
               onPressed: isButtonEnabled
                   ? () async {
+                      setState(() {
+                        phoneNumber = countrycode.text + phone;
+                      });
                       await FirebaseAuth.instance.verifyPhoneNumber(
                         phoneNumber: '${countrycode.text + phone}',
                         verificationCompleted:
@@ -114,6 +121,7 @@ class _MyPhoneState extends State<MyPhone> {
                           Navigator.pushNamed(context, "otp");
                         },
                         codeAutoRetrievalTimeout: (String verificationId) {},
+                        // timeout: const Duration(seconds: 60),
                       );
                     }
                   : null,

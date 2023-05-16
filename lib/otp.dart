@@ -1,3 +1,4 @@
+import 'package:diy_utilities/constants.dart';
 import 'package:diy_utilities/phone.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -21,6 +22,7 @@ class _MyOtpState extends State<MyOtp> {
   int _countDown = 30;
   bool _isResendEnabled = false;
   bool _showInvalidOtpError = false;
+  int? resendingToken;
 
   final TextEditingController _otpController = TextEditingController();
 
@@ -55,13 +57,29 @@ class _MyOtpState extends State<MyOtp> {
     super.dispose();
   }
 
-  void sendOTP() {
+  void sendOTP() async {
     // Replace this with your actual OTP sending logic
     print('Sending OTP...');
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) {},
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) {
+        setState(() {
+          resendingToken = resendToken;
+          MyPhone.verify = verificationId;
+        });
+
+        // Navigator.pushNamed(context, "otp");
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+      forceResendingToken: resendingToken,
+      timeout: const Duration(seconds: 60),
+    );
     // Simulate OTP sent after 2 seconds
-    Timer(Duration(seconds: 2), () {
-      print('OTP sent successfully!');
-    });
+    // Timer(Duration(seconds: 2), () {
+    //   print('OTP sent successfully!');
+    // });
   }
 
   void resendOTP() {
@@ -184,7 +202,7 @@ class _MyOtpState extends State<MyOtp> {
 
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => MyHome()),
+                        MaterialPageRoute(builder: (context) => MyApp()),
                         (route) => false,
                       );
                     } catch (e) {

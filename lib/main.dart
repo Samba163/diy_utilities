@@ -15,7 +15,7 @@ void main() async {
       'loading': (context) => LoadingPage(),
       'phone': (context) => MyPhone(),
       'otp': (context) => MyOtp(),
-      'home': (context) => MyHome(),
+      'home': (context) => MyApp(),
     },
   ));
 }
@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
 }
 
 class LoadingPage extends StatefulWidget {
+  const LoadingPage({super.key});
+
   @override
   _LoadingPageState createState() => _LoadingPageState();
 }
@@ -42,7 +44,7 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 5), () {
       Navigator.pushReplacementNamed(context, 'phone');
     });
   }
@@ -55,7 +57,7 @@ class _LoadingPageState extends State<LoadingPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/images/logo.jpg', height: 180, width: 180),
-            CircularProgressIndicator(),
+            const CircularProgressIndicator(),
             SizedBox(height: 20),
             Text('Loading...', style: TextStyle(fontSize: 30)),
           ],

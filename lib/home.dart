@@ -1,73 +1,122 @@
+import 'package:diy_utilities/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
-class MyHome extends StatelessWidget {
-  const MyHome({Key? key}) : super(key: key);
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      routes: {
+        '/': (context) => MyHomePage(),
+        '/profile_page': (context) => ProfilePage(),
+      },
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  Future<void> scanBarcode(BuildContext context) async {
+    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Color for the scan button
+      'Cancel', // Text for the cancel button
+      false, // Whether to show the flash icon on the scan screen
+      ScanMode.DEFAULT, // Scan mode (default, QR code, barcode)
+    );
+
+    if (barcodeScanRes != '-1') {
+      print('Scanned Data: $barcodeScanRes');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Scanned Data'),
+            content: Text(barcodeScanRes),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      print('Scan canceled by the user');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: Text(
-              "Dashboard",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
-            ),
-            centerTitle: true,
-            leading: IconButton(
-              icon: Icon(Icons.menu),
-              color: Colors.black,
-              onPressed: () {
-                // Implement menu functionality
-              },
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "phone");
-                },
-                child: Text(
-                  "Logout",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Image.asset(
-                'assets/images/logo.jpg',
-                height: 100,
-                width: 100,
-              ),
-              SizedBox(height: 60),
-              Image.asset(
-                'assets/images/login.png',
-                width: 100,
-                height: 100,
-              ),
-            ],
-          ),
-          SizedBox(height: 30),
-          Text(
-            "Logged in Successfully",
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                decoration: TextDecoration.none),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Dashboard'),
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+          icon: Icon(Icons.menu),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile_page');
+            },
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('Option 1'),
+              onTap: () {
+                // Handle option 1
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
+            ListTile(
+              title: Text('Option 2'),
+              onTap: () {
+                // Handle option 2
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: ElevatedButton(
+            child: Text('Scan Barcode'),
+            onPressed: () => scanBarcode(context),
+          ),
+        ),
       ),
     );
   }
