@@ -1,13 +1,11 @@
-import 'package:diy_utilities/constants.dart';
-import 'package:diy_utilities/phone.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'dart:async';
 
-import 'home.dart';
+import '../../constants/constants.dart';
+import '../../main.dart';
+import 'login.dart';
 
 class MyOtp extends StatefulWidget {
   const MyOtp({super.key});
@@ -33,8 +31,8 @@ class _MyOtpState extends State<MyOtp> {
   }
 
   void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
         if (_countDown == 0) {
@@ -67,7 +65,7 @@ class _MyOtpState extends State<MyOtp> {
       codeSent: (String verificationId, int? resendToken) {
         setState(() {
           resendingToken = resendToken;
-          MyPhone.verify = verificationId;
+          LoginPage.verify = verificationId;
         });
 
         // Navigator.pushNamed(context, "otp");
@@ -96,18 +94,19 @@ class _MyOtpState extends State<MyOtp> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
-      textStyle: TextStyle(
+      textStyle: const TextStyle(
           fontSize: 20,
           color: Color.fromRGBO(30, 60, 87, 1),
           fontWeight: FontWeight.w600),
       decoration: BoxDecoration(
-        border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
+        border: Border.all(color: const Color.fromRGBO(234, 239, 243, 1)),
         borderRadius: BorderRadius.circular(20),
       ),
     );
 
+    // ignore: unused_local_variable
     final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
+      border: Border.all(color: const Color.fromRGBO(114, 178, 238, 1)),
       borderRadius: BorderRadius.circular(8),
     );
 
@@ -193,7 +192,7 @@ class _MyOtpState extends State<MyOtp> {
                           'the code is $code and controller text is ${_otpController.text.trim()}');
                       PhoneAuthCredential credential =
                           PhoneAuthProvider.credential(
-                        verificationId: MyPhone.verify,
+                        verificationId: LoginPage.verify,
                         smsCode: _otpController.text.trim(),
                       );
 

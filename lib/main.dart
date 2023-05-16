@@ -1,10 +1,10 @@
-import 'dart:async';
-import 'package:diy_utilities/phone.dart';
+import 'package:diy_utilities/loading.dart';
+import 'package:diy_utilities/pages/authentication/login.dart';
+import 'package:diy_utilities/pages/authentication/otp.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:diy_utilities/home.dart';
-
-import 'otp.dart';
+import 'dashboard/dashboard_home.dart';
+import 'dashboard/profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,10 +12,11 @@ void main() async {
   runApp(MaterialApp(
     initialRoute: 'loading',
     routes: {
-      'loading': (context) => LoadingPage(),
-      'phone': (context) => MyPhone(),
-      'otp': (context) => MyOtp(),
-      'home': (context) => MyApp(),
+      'loading': (context) => const LoadingPage(),
+      'login': (context) => const LoginPage(),
+      'otp': (context) => const MyOtp(),
+      'dashboard_home': (context) => const MyDashboard(),
+      'profile': (context) => ProfilePage(),
     },
   ));
 }
@@ -29,40 +30,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: LoadingPage(),
-    );
-  }
-}
-
-class LoadingPage extends StatefulWidget {
-  const LoadingPage({super.key});
-
-  @override
-  _LoadingPageState createState() => _LoadingPageState();
-}
-
-class _LoadingPageState extends State<LoadingPage> {
-  @override
-  void initState() {
-    super.initState();
-    Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, 'phone');
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/images/logo.jpg', height: 180, width: 180),
-            const CircularProgressIndicator(),
-            SizedBox(height: 20),
-            Text('Loading...', style: TextStyle(fontSize: 30)),
-          ],
-        ),
-      ),
     );
   }
 }

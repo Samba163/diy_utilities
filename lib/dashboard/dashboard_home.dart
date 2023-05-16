@@ -1,28 +1,18 @@
-import 'package:diy_utilities/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import '../functions/navigate.dart';
+import '../profile.dart';
 
-void main() {
-  runApp(MyApp());
-}
+class MyDashboard extends StatefulWidget {
+  const MyDashboard({super.key});
 
-class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      routes: {
-        '/': (context) => MyHomePage(),
-        '/profile_page': (context) => ProfilePage(),
-      },
-    );
-  }
+  State<MyDashboard> createState() => _MyDashboardState();
 }
 
-class MyHomePage extends StatelessWidget {
+class _MyDashboardState extends State<MyDashboard> {
+  Navigation nav = Navigation();
+
   Future<void> scanBarcode(BuildContext context) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Color for the scan button
@@ -33,15 +23,16 @@ class MyHomePage extends StatelessWidget {
 
     if (barcodeScanRes != '-1') {
       print('Scanned Data: $barcodeScanRes');
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Scanned Data'),
+            title: const Text('Scanned Data'),
             content: Text(barcodeScanRes),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -58,20 +49,25 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: ProfilePage(),
+      endDrawerEnableOpenDragGesture: true,
+      extendBody: true,
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: const Text('Dashboard'),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
             Scaffold.of(context).openDrawer();
           },
-          icon: Icon(Icons.menu),
+          icon: const Icon(Icons.menu),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
             onPressed: () {
-              Navigator.pushNamed(context, '/profile_page');
+              //Navigator.pushReplacementNamed(context, 'profile');
+
+              nav.push(context, ProfilePage());
             },
           ),
         ],
