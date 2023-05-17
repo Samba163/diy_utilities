@@ -93,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Align(
       alignment: Alignment.centerRight,
       child: FractionallySizedBox(
-        widthFactor: 0.7,
+        widthFactor: 0.8,
         child: Scaffold(
           appBar: AppBar(
             title: Text('Profile Page'),
@@ -141,9 +141,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 20),
                   Text(
-                    'Bio',
+                    'Passion ID',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -153,7 +153,22 @@ class _ProfilePageState extends State<ProfilePage> {
                   TextField(
                     controller: bioController,
                     decoration: InputDecoration(
-                      hintText: 'Enter your bio',
+                      hintText: 'Enter your Passion ID',
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Designation',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: bioController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter your Designation',
                     ),
                   ),
                   SizedBox(height: 16),

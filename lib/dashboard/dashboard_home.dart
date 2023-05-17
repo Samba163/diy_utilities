@@ -96,14 +96,14 @@ class _MyDashboardState extends State<MyDashboard> {
               ),
             ),
             ListTile(
-              title: Text('Option 1'),
+              title: Text('Organization'),
               onTap: () {
                 // Handle option 1
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              title: Text('Option 2'),
+              title: Text('Statistics'),
               onTap: () {
                 // Handle option 2
                 Navigator.pop(context); // Close the drawer
