@@ -1,8 +1,8 @@
 import 'package:diy_utilities/constants/constants.dart';
+import 'package:diy_utilities/dashboard/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import '../functions/navigate.dart';
-import '../profile.dart';
 
 class MyDashboard extends StatefulWidget {
   const MyDashboard({super.key});

@@ -1,4 +1,5 @@
 import 'package:diy_utilities/constants/constants.dart';
+import 'package:diy_utilities/pages/authentication/otp.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -15,24 +16,38 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController countrycode = TextEditingController();
   var phone = "";
   bool isButtonEnabled = false;
-  bool isloading = false;
+  bool isLoading = false;
+  // bool isPageChanged = true;
 
   @override
   void initState() {
     countrycode.text = "+91";
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
 
   void checkButtonEnabled() {
     setState(() {
       isButtonEnabled = phone.length == 10;
+    });
+  }
+
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+      // isPageChanged = false;
+    });
+    Future.delayed(Duration(seconds: 5), () {
+      setState(() {
+        isLoading = false;
+        // isPageChanged = true;
+      });
+    });
+  }
+
+  void updatePageChanged(bool value) {
+    setState(() {
+      // isPageChanged = value;
+      isLoading = value;
     });
   }
 
@@ -113,47 +128,49 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 50,
             width: 120,
-            child: isloading
-                ? const ElevatedButton(
-                    onPressed: null, child: Text("Loading..."))
-                : ElevatedButton(
-                    onPressed: isButtonEnabled
-                        ? () async {
-                            setState(() {
-                              isloading = true;
-                              phoneNumber = countrycode.text + phone;
-                            });
-                            await FirebaseAuth.instance.verifyPhoneNumber(
-                              phoneNumber: '${countrycode.text + phone}',
-                              verificationCompleted:
-                                  (PhoneAuthCredential credential) {},
-                              verificationFailed: (FirebaseAuthException e) {},
-                              codeSent:
-                                  (String verificationId, int? resendToken) {
-                                LoginPage.verify = verificationId;
-                                Navigator.pushNamed(context, "otp");
-                              },
-                              codeAutoRetrievalTimeout:
-                                  (String verificationId) {},
-                              // timeout: const Duration(seconds: 60),
-                            );
-                          }
-                        : null,
-                    child: const Text(
-                      'Get OTP',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
+            child: ElevatedButton(
+              onPressed: isButtonEnabled && !isLoading
+                  ? () async {
+                      setState(() {
+                        isLoading = true;
+                        phoneNumber = countrycode.text + phone;
+                        // isPageChanged = false;
+                      });
+                      await FirebaseAuth.instance.verifyPhoneNumber(
+                        phoneNumber: '${countrycode.text + phone}',
+                        verificationCompleted:
+                            (PhoneAuthCredential credential) {},
+                        verificationFailed: (FirebaseAuthException e) {},
+                        codeSent: (String verificationId, int? resendToken) {
+                          LoginPage.verify = verificationId;
+                          // Navigator.pushNamed(context, "otp");
+                          updatePageChanged(false);
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return MyOtp(
+                                onPressed: ((value) => updatePageChanged));
+                          }));
+                        },
+                        codeAutoRetrievalTimeout: (String verificationId) {},
+                        // timeout: const Duration(seconds: 60),
+                      );
+                    }
+                  : null,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(
+                isLoading ? 'Loading...' : 'Get OTP',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
         ],
       ),

@@ -14,7 +14,9 @@ void main() async {
     routes: {
       'loading': (context) => const LoadingPage(),
       'login': (context) => const LoginPage(),
-      'otp': (context) => const MyOtp(),
+      'otp': (context) => MyOtp(
+            onPressed: (value) {},
+          ),
       'dashboard_home': (context) => const MyDashboard(),
       'profile': (context) => ProfilePage(),
     },

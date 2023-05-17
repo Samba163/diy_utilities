@@ -5,11 +5,13 @@ import 'dart:async';
 
 import '../../constants/constants.dart';
 import '../../dashboard/dashboard_home.dart';
-import '../../main.dart';
+
 import 'login.dart';
 
 class MyOtp extends StatefulWidget {
-  const MyOtp({super.key});
+  final ValueChanged onPressed;
+
+  const MyOtp({super.key, required this.onPressed});
 
   @override
   State<MyOtp> createState() => _MyOtpState();
@@ -90,6 +92,17 @@ class _MyOtpState extends State<MyOtp> {
     });
   }
 
+  void goBack() {
+    // Perform any necessary tasks before going back
+    // Call the updatePageChanged callback function
+    // LoginPage loginPage =
+    //     ModalRoute.of(context)!.settings.arguments as LoginPage;
+    // loginPage.updatePageChanged(false);
+    // widget.onPressed(false);
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
@@ -123,9 +136,7 @@ class _MyOtpState extends State<MyOtp> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => goBack(),
           icon: Icon(
             Icons.arrow_back_ios_rounded,
             color: Colors.black,
@@ -172,7 +183,7 @@ class _MyOtpState extends State<MyOtp> {
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
                         context,
-                        "phone",
+                        "login",
                         (route) => false,
                       );
                     },

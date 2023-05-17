@@ -1,10 +1,15 @@
+import 'package:diy_utilities/functions/navigate.dart';
+import 'package:diy_utilities/pages/authentication/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -13,6 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   DateTime? selectedDate;
   ImagePicker picker = ImagePicker();
   XFile? selectedImage;
+
+  Navigation nav = Navigation();
 
   @override
   void dispose() {
@@ -70,6 +77,17 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void _logout() {
+    // Perform logout logic
+    // ...
+
+    // Navigate to the login page
+    Navigator.pushReplacementNamed(context, 'login');
+    FirebaseAuth.instance.signOut().whenComplete(() {
+      nav.pushAndReplace(context, const LoginPage());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -78,7 +96,13 @@ class _ProfilePageState extends State<ProfilePage> {
         widthFactor: 0.7,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Profile Page'),
+            title: Text('Profile Page'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () => _logout(),
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -93,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         radius: 80,
                         backgroundImage: selectedImage != null
                             ? FileImage(File(selectedImage!.path))
-                            : const AssetImage('assets/images/default.jpg')
+                            : AssetImage('assets/images/default.jpg')
                                 as ImageProvider<Object>?,
                       ),
                       if (selectedImage != null)
@@ -101,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           left: -15,
                           bottom: 0,
                           child: IconButton(
-                            icon: const Icon(Icons.delete),
+                            icon: Icon(Icons.delete),
                             onPressed: _removeImage,
                             color: Colors.red,
                           ),
@@ -110,29 +134,29 @@ class _ProfilePageState extends State<ProfilePage> {
                         right: -10,
                         bottom: 0,
                         child: IconButton(
-                          icon: const Icon(Icons.edit),
+                          icon: Icon(Icons.edit),
                           onPressed: _pickImageFromGallery,
                           color: Colors.black,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
+                  SizedBox(height: 16),
+                  Text(
                     'Bio',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   TextField(
                     controller: bioController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Enter your bio',
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   const Text(
                     'Date of Birth',
                     style: TextStyle(
@@ -140,27 +164,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   InkWell(
                     onTap: () => _selectDate(context),
                     child: InputDecorator(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Select your date of birth',
                       ),
                       child: Text(
                         _formatDate(selectedDate),
-                        style: const TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 16),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _saveProfileDetails,
-                    child: const Text('Save'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('back'),
+                    child: Text('Save'),
                   ),
                 ],
               ),
