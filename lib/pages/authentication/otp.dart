@@ -77,10 +77,6 @@ class _MyOtpState extends State<MyOtp> {
       forceResendingToken: resendingToken,
       timeout: const Duration(seconds: 60),
     );
-    // Simulate OTP sent after 2 seconds
-    // Timer(Duration(seconds: 2), () {
-    //   print('OTP sent successfully!');
-    // });
   }
 
   void resendOTP() {
