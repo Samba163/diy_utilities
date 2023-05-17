@@ -13,6 +13,7 @@ class MyDashboard extends StatefulWidget {
 
 class _MyDashboardState extends State<MyDashboard> {
   Navigation nav = Navigation();
+  String? selectedImagePath;
 
   Future<void> scanBarcode(BuildContext context) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(

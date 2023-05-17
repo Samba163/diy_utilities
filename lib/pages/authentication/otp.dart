@@ -1,6 +1,8 @@
+import 'package:diy_utilities/providers/user_data_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 
 import '../../constants/constants.dart';
@@ -207,6 +209,17 @@ class _MyOtpState extends State<MyOtp> {
                       // Sign the user in (or link) with the credential
                       await auth.signInWithCredential(credential);
 
+                      setState(() {
+                        globalUID = FirebaseAuth.instance.currentUser == null
+                            ? ''
+                            : FirebaseAuth.instance.currentUser!.uid;
+                      });
+
+                      // ignore: use_build_context_synchronously
+                      Provider.of<UserDataProvider>(context, listen: false)
+                          .getUserData();
+
+                      // ignore: use_build_context_synchronously
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(

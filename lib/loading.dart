@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:diy_utilities/dashboard/dashboard_home.dart';
 import 'package:diy_utilities/pages/authentication/login.dart';
+import 'package:diy_utilities/providers/user_data_provider.dart';
 import 'package:diy_utilities/services/read_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'constants/constants.dart';
 import 'functions/navigate.dart';
@@ -34,6 +36,7 @@ class _LoadingPageState extends State<LoadingPage> {
         if (globalUID.isNotEmpty || globalUID.length > 5) {
           // readData.
           getUserData(context, globalUID);
+          Provider.of<UserDataProvider>(context, listen: false).getUserData();
           nav.pushAndReplace(context, const MyDashboard());
         } else {
           //Navigator.pushReplacementNamed(context, 'login');

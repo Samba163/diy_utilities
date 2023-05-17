@@ -1,30 +1,78 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diy_utilities/constants/constants.dart';
 import 'package:diy_utilities/functions/navigate.dart';
 import 'package:diy_utilities/pages/authentication/login.dart';
+import 'package:diy_utilities/providers/user_data_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'dart:io';
+// ignore: depend_on_referenced_packages
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
-  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  TextEditingController bioController = TextEditingController();
+  late TextEditingController bioController;
+  late TextEditingController idController;
+  late TextEditingController DoBController;
+  String designation = "";
+  String passionId = "";
+  String dob = "";
   DateTime? selectedDate;
   ImagePicker picker = ImagePicker();
   XFile? selectedImage;
+  String imageUrl = '';
+  String? localImagePath;
 
   Navigation nav = Navigation();
 
   @override
   void dispose() {
     bioController.dispose();
+    idController.dispose();
+    DoBController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    var currentUserData =
+        Provider.of<UserDataProvider>(context, listen: false).loggedInUserData;
+    bioController = TextEditingController(text: currentUserData['designation']);
+    idController = TextEditingController(text: currentUserData['passionID']);
+    DoBController = TextEditingController(
+        text: _formatDate(currentUserData['dateOfBirth'].toDate()).toString());
+
+    designation = currentUserData['designation'];
+    passionId = currentUserData['passionID'];
+    dob = _formatDate(currentUserData['dateOfBirth'].toDate()).toString();
+
+    // fetchImageUrl();
+  }
+
+  Future<void> fetchImageUrl() async {
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('users');
+    Reference referenceUID = referenceDirImages.child(globalUID);
+    Reference referenceImage = referenceUID.child('profile_image.jpg');
+    try {
+      imageUrl = await referenceImage.getDownloadURL();
+      setState(() {
+        imageUrl = imageUrl;
+      });
+    } catch (error) {
+      print('Error fetching image URL: $error');
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -38,6 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+        DoBController.text = _formatDate(selectedDate).toString();
       });
     }
   }
@@ -50,18 +99,67 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _pickImageFromGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
+    if (pickedFile == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
     setState(() {
       selectedImage = pickedFile;
     });
+    Directory tempDir = await getTemporaryDirectory();
+    String imagePath = path.join(tempDir.path, 'selected_image.jpg');
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('users');
+    Reference referenceUID = referenceDirImages.child(globalUID);
+    Reference referenceImageToUpload = referenceUID.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(pickedFile.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+
+      await FirebaseFirestore.instance.collection('users').doc(globalUID).set({
+        'image': imageUrl,
+      }, SetOptions(merge: true));
+
+      print('Image URL: $imageUrl');
+
+      // Save the image locally
+      Directory appDir = await getApplicationDocumentsDirectory();
+      String localImagePath = '${appDir.path}/profile_image.jpg';
+      File localImageFile = File(localImagePath);
+      await localImageFile.writeAsBytes(await pickedFile.readAsBytes());
+      setState(() {
+        this.localImagePath = localImagePath;
+      });
+    } catch (error) {
+      print('Error uploading image: $error');
+    }
   }
 
-  void _saveProfileDetails() {
+  Future<void> _saveProfileDetails(currentUserData) async {
     String bio = bioController.text;
     String dob = _formatDate(selectedDate);
 
     // Process and save the user's profile details
     // ...
+
+    Map<String, dynamic> dataToBeUpdated = {};
+
+    if (designation != bioController.text.trim()) {
+      dataToBeUpdated['designation'] = bioController.text.trim();
+    }
+    // if (dob != _formatDate(selectedDate).toString()) {
+    if (currentUserData['dateOfBirth'] != selectedDate) {
+      dataToBeUpdated['dateOfBirth'] = selectedDate;
+    }
+    if (passionId != idController.text.trim()) {
+      dataToBeUpdated['passionID'] = idController.text.trim();
+    }
+    debugPrint('data map $dataToBeUpdated');
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(globalUID)
+        .set(dataToBeUpdated, SetOptions(merge: true));
 
     // For demonstration, let's print the entered details
     print('Bio: $bio');
@@ -71,9 +169,14 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void _removeImage() {
+  void _removeImage() async {
+    await FirebaseFirestore.instance.collection('users').doc(globalUID).set({
+      'image': '',
+    }, SetOptions(merge: true));
+
     setState(() {
       selectedImage = null;
+      localImagePath = null;
     });
   }
 
@@ -84,12 +187,15 @@ class _ProfilePageState extends State<ProfilePage> {
     // Navigate to the login page
     Navigator.pushReplacementNamed(context, 'login');
     FirebaseAuth.instance.signOut().whenComplete(() {
+      Provider.of<UserDataProvider>(context, listen: false).cancel;
       nav.pushAndReplace(context, const LoginPage());
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var currentUserData = context.watch<UserDataProvider>().loggedInUserData;
+
     return Align(
       alignment: Alignment.centerRight,
       child: FractionallySizedBox(
@@ -115,21 +221,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 80,
-                        backgroundImage: selectedImage != null
-                            ? FileImage(File(selectedImage!.path))
+                        backgroundImage: currentUserData['image'].isNotEmpty
+                            ? NetworkImage(currentUserData['image'])
                             : AssetImage('assets/images/default.jpg')
                                 as ImageProvider<Object>?,
                       ),
-                      if (selectedImage != null)
-                        Positioned(
-                          left: -15,
-                          bottom: 0,
-                          child: IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: _removeImage,
-                            color: Colors.red,
-                          ),
+                      Positioned(
+                        left: -15,
+                        bottom: 0,
+                        child: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed:
+                              currentUserData['image'].toString().isNotEmpty
+                                  ? _removeImage
+                                  : null,
+                          color: currentUserData['image'].toString().isNotEmpty
+                              ? Colors.red
+                              : Colors.grey,
                         ),
+                      ),
                       Positioned(
                         right: -10,
                         bottom: 0,
@@ -151,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   SizedBox(height: 8),
                   TextField(
-                    controller: bioController,
+                    controller: idController,
                     decoration: InputDecoration(
                       hintText: 'Enter your Passion ID',
                     ),
@@ -182,19 +292,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(height: 8),
                   InkWell(
                     onTap: () => _selectDate(context),
-                    child: InputDecorator(
+                    child: TextField(
+                      onTap: () => _selectDate(context),
+                      controller: DoBController,
                       decoration: InputDecoration(
                         hintText: 'Select your date of birth',
-                      ),
-                      child: Text(
-                        _formatDate(selectedDate),
-                        style: TextStyle(fontSize: 16),
                       ),
                     ),
                   ),
                   SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: _saveProfileDetails,
+                    onPressed: () => _saveProfileDetails(currentUserData),
                     child: Text('Save'),
                   ),
                 ],
