@@ -87,11 +87,7 @@ class _MyDashboardState extends State<MyDashboard> {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-<<<<<<< HEAD
-              nav.push(context, ProfilePage());
-=======
               nav.pushAndReplace(context, ProfilePage());
->>>>>>> 2e3978d400d26682864a5b66b7c3e52101d4295f
             },
           ),
         ],
@@ -126,12 +122,8 @@ class _MyDashboardState extends State<MyDashboard> {
             ListTile(
               title: Text('Organization'),
               onTap: () {
-<<<<<<< HEAD
-                Navigator.pop(context); // Close the drawer
-=======
                 nav.pushAndReplace(
                     context, OrganizationPage()); // Close the drawer
->>>>>>> 2e3978d400d26682864a5b66b7c3e52101d4295f
               },
             ),
             ListTile(
