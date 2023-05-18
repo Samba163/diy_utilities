@@ -29,6 +29,7 @@ class _MyDashboardState extends State<MyDashboard> {
 
     if (barcodeScanRes != '-1') {
       print('Scanned Data: $barcodeScanRes');
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -101,6 +102,7 @@ class _MyDashboardState extends State<MyDashboard> {
                 color: Colors.blue,
               ),
               child: Column(
+<<<<<<< Updated upstream
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
@@ -109,6 +111,10 @@ class _MyDashboardState extends State<MyDashboard> {
                         CachedNetworkImageProvider(userProfilePicUrl ?? ''),
                   ),
                   SizedBox(height: 8),
+=======
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+>>>>>>> Stashed changes
                   Text(
                     'Menu',
                     style: TextStyle(
@@ -116,6 +122,14 @@ class _MyDashboardState extends State<MyDashboard> {
                       fontSize: 24,
                     ),
                   ),
+<<<<<<< Updated upstream
+=======
+                  SizedBox(height: 10),
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: AssetImage('assets/images/default.jpg'),
+                  ),
+>>>>>>> Stashed changes
                 ],
               ),
             ),
@@ -123,7 +137,9 @@ class _MyDashboardState extends State<MyDashboard> {
               title: Text('Organization'),
               onTap: () {
                 nav.pushAndReplace(
-                    context, OrganizationPage()); // Close the drawer
+                  context,
+                  OrganizationPage(),
+                );
               },
             ),
             ListTile(
