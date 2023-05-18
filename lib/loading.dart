@@ -23,7 +23,6 @@ class _LoadingPageState extends State<LoadingPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     // FirebaseAuth.instance.signOut();
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -49,7 +48,6 @@ class _LoadingPageState extends State<LoadingPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -82,7 +80,7 @@ class _LoadingPageState extends State<LoadingPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/logo.jpg', height: 180, width: 180),
+            Image.asset('assets/images/logoA.png', height: 180, width: 180),
             const CircularProgressIndicator(),
             const SizedBox(height: 20),
             const Text('Loading...', style: TextStyle(fontSize: 30)),

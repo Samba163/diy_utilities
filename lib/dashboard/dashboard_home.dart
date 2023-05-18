@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:diy_utilities/constants/constants.dart';
+import 'package:diy_utilities/dashboard/organization.dart';
 import 'package:diy_utilities/dashboard/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -50,11 +51,18 @@ class _MyDashboardState extends State<MyDashboard> {
     }
   }
 
-  @override
-  void initState() {
-    debugPrint(userData.toString());
-    super.initState();
-  }
+  // void _openProfilePage() async {
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => ProfilePage()),
+  //   );
+
+  //   if (result != null && result is String) {
+  //     setState(() {
+  //       selectedImagePath = result;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -65,17 +73,25 @@ class _MyDashboardState extends State<MyDashboard> {
       appBar: AppBar(
         title: const Text('Dashboard'),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: const Icon(Icons.menu),
+            );
           },
-          icon: const Icon(Icons.menu),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
+<<<<<<< HEAD
               nav.push(context, ProfilePage());
+=======
+              nav.pushAndReplace(context, ProfilePage());
+>>>>>>> 2e3978d400d26682864a5b66b7c3e52101d4295f
             },
           ),
         ],
@@ -110,7 +126,12 @@ class _MyDashboardState extends State<MyDashboard> {
             ListTile(
               title: Text('Organization'),
               onTap: () {
+<<<<<<< HEAD
                 Navigator.pop(context); // Close the drawer
+=======
+                nav.pushAndReplace(
+                    context, OrganizationPage()); // Close the drawer
+>>>>>>> 2e3978d400d26682864a5b66b7c3e52101d4295f
               },
             ),
             ListTile(
