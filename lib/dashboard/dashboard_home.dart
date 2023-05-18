@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:diy_utilities/constants/constants.dart';
+
 import 'package:diy_utilities/dashboard/organization.dart';
 import 'package:diy_utilities/dashboard/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+
 import 'package:provider/provider.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../functions/navigate.dart';
 import '../providers/user_data_provider.dart';
 
@@ -18,41 +19,9 @@ class MyDashboard extends StatefulWidget {
 class _MyDashboardState extends State<MyDashboard> {
   Navigation nav = Navigation();
   String? selectedImagePath;
-  String? userProfilePicUrl =
-      'https://firebasestorage.googleapis.com/v0/b/diy-project-c9df6.appspot.com/o/users%2FVzNQTV639NO4361w2ahtRp4RpQW2%2F1684391068420?alt=media&token=b7ed60c2-1b33-4686-9fea-1f48b032c87d'; // Replace with the actual URL of the profile picture
-
-  Future<void> scanBarcode(BuildContext context) async {
-    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Color for the scan button
-      'Cancel', // Text for the cancel button
-      false, // Whether to show the flash icon on the scan screen
-      ScanMode.DEFAULT, // Scan mode (default, QR code, barcode)
-    );
-
-    if (barcodeScanRes != '-1') {
-      print('Scanned Data: $barcodeScanRes');
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Scanned Data'),
-            content: Text(barcodeScanRes),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      print('Scan canceled by the user');
-    }
-  }
+  final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? _controller;
+  // bool _isScanning = false;
 
   // void _openProfilePage() async {
   //   final result = await Navigator.push(
@@ -66,6 +35,49 @@ class _MyDashboardState extends State<MyDashboard> {
   //     });
   //   }
   // }
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    setState(() {
+      _controller = controller;
+      // _isScanning = true;
+    });
+    controller.scannedDataStream.listen((scanData) {
+      // if (_isScanning) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Scanned Data'),
+            content: Text(scanData.code ?? 'No data available'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _controller?.resumeCamera();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      _controller?.pauseCamera();
+      // setState(() {
+      //   _isScanning = false;
+      // });
+      // }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,39 +114,72 @@ class _MyDashboardState extends State<MyDashboard> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.blue,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Menu',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage:
-                        CachedNetworkImageProvider(userProfilePicUrl ?? ''),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: CachedNetworkImageProvider(
+                            currentUserData == null
+                                ? ''
+                                : currentUserData['image'] ?? ''),
+                      ),
+                      const SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            currentUserData == null
+                                ? ''
+                                : currentUserData['passionID'],
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            currentUserData == null
+                                ? ''
+                                :
+                            currentUserData['name'],
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             ListTile(
-              title: Text('Organization'),
+              title: const Text('Organization'),
               onTap: () {
                 nav.pushAndReplace(
                   context,
-                  OrganizationPage(),
+                  const OrganizationPage(),
                 );
               },
             ),
             ListTile(
-              title: Text('Statistics'),
+              title: const Text('Statistics'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
               },
@@ -142,14 +187,37 @@ class _MyDashboardState extends State<MyDashboard> {
           ],
         ),
       ),
-      body: Container(
-        color: Colors.white,
-        child: Center(
-          child: ElevatedButton(
-            child: Text('Scan Barcode'),
-            onPressed: () => scanBarcode(context),
+      body: Stack(
+        children: [
+          QRView(
+            key: _qrKey,
+            onQRViewCreated: _onQRViewCreated,
+            overlay: QrScannerOverlayShape(
+              borderColor: Colors.blue,
+              borderRadius: 10,
+              borderLength: 30,
+              borderWidth: 10,
+              cutOutSize: MediaQuery.of(context).size.width * 0.8,
+            ),
+            cameraFacing: CameraFacing.back,
           ),
-        ),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.width * 0.8,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -27,6 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late TextEditingController idController;
   late TextEditingController DoBController;
   late TextEditingController nameController;
+
+  bool isEdited = false;
   String designation = "";
   String passionId = "";
   String dob = "";
@@ -44,6 +46,10 @@ class _ProfilePageState extends State<ProfilePage> {
     bioController.dispose();
     idController.dispose();
     DoBController.dispose();
+    bioController.removeListener(_handleEdit);
+    idController.removeListener(_handleEdit);
+    nameController.removeListener(_handleEdit);
+    DoBController.removeListener(_handleEdit);
     super.dispose();
   }
 
@@ -63,6 +69,10 @@ class _ProfilePageState extends State<ProfilePage> {
     ename = currentUserData['name'];
     dob = _formatDate(currentUserData['dateOfBirth'].toDate()).toString();
     selectedDate = currentUserData['dateOfBirth'].toDate();
+    bioController.addListener(_handleEdit);
+    idController.addListener(_handleEdit);
+    nameController.addListener(_handleEdit);
+    DoBController.addListener(_handleEdit);
 
     // fetchImageUrl();
   }
@@ -184,6 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       dataToBeUpdated.clear();
     });
+    nav.pushAndReplace(context, const MyDashboard());
   }
 
   void _removeImage() async {
@@ -209,6 +220,12 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void _handleEdit() {
+    setState(() {
+      isEdited = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var currentUserData = context.watch<UserDataProvider>().loggedInUserData;
@@ -219,11 +236,11 @@ class _ProfilePageState extends State<ProfilePage> {
         widthFactor: 0.8,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Profile Page'),
+            title: const Text('Profile Page'),
             leading: Builder(
               builder: (BuildContext context) {
                 return IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     if (Navigator.of(context).canPop()) {
                       Navigator.of(context).pop();
@@ -231,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Handle the case when there is no previous route
                       // For example, you can show a dialog or navigate to a default screen
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => MyDashboard()),
+                        MaterialPageRoute(builder: (context) => const MyDashboard()),
                       );
                     }
                   },
@@ -258,14 +275,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         radius: 80,
                         backgroundImage: currentUserData['image'].isNotEmpty
                             ? NetworkImage(currentUserData['image'])
-                            : AssetImage('assets/images/default.jpg')
+                            : const AssetImage('assets/images/default.jpg')
                                 as ImageProvider<Object>?,
                       ),
                       Positioned(
                         left: -15,
                         bottom: 0,
                         child: IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed:
                               currentUserData['image'].toString().isNotEmpty
                                   ? _removeImage
@@ -279,14 +296,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         right: -10,
                         bottom: 0,
                         child: IconButton(
-                          icon: Icon(Icons.edit),
+                          icon: const Icon(Icons.edit),
                           onPressed: _pickImageFromGallery,
                           color: Colors.black,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   const Text(
                     'Name',
                     style: TextStyle(
@@ -294,14 +311,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: nameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Enter your name',
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   const Text(
                     'Passion ID',
                     style: TextStyle(
@@ -309,29 +326,29 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: idController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Enter your Passion ID',
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Designation',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: bioController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Enter your Designation',
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   const Text(
                     'Date of Birth',
                     style: TextStyle(
@@ -339,21 +356,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   InkWell(
                     onTap: () => _selectDate(context),
                     child: TextField(
                       onTap: () => _selectDate(context),
                       controller: DoBController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Select your date of birth',
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => _saveProfileDetails(currentUserData),
-                    child: Text('Save'),
+                    onPressed: isEdited
+                        ? () => _saveProfileDetails(currentUserData)
+                        : null,
+                    child: const Text('Save'),
                   ),
                 ],
               ),
