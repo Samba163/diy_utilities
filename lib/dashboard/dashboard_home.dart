@@ -1,11 +1,12 @@
 import 'package:diy_utilities/constants/constants.dart';
+import 'package:diy_utilities/dashboard/organization.dart';
 import 'package:diy_utilities/dashboard/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import '../functions/navigate.dart';
 
 class MyDashboard extends StatefulWidget {
-  const MyDashboard({super.key});
+  const MyDashboard({Key? key}) : super(key: key);
 
   @override
   State<MyDashboard> createState() => _MyDashboardState();
@@ -25,7 +26,6 @@ class _MyDashboardState extends State<MyDashboard> {
 
     if (barcodeScanRes != '-1') {
       print('Scanned Data: $barcodeScanRes');
-      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -48,11 +48,18 @@ class _MyDashboardState extends State<MyDashboard> {
     }
   }
 
-  @override
-  void initState() {
-    debugPrint(userData.toString());
-    super.initState();
-  }
+  // void _openProfilePage() async {
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => ProfilePage()),
+  //   );
+
+  //   if (result != null && result is String) {
+  //     setState(() {
+  //       selectedImagePath = result;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +70,21 @@ class _MyDashboardState extends State<MyDashboard> {
       appBar: AppBar(
         title: const Text('Dashboard'),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: const Icon(Icons.menu),
+            );
           },
-          icon: const Icon(Icons.menu),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              //Navigator.pushReplacementNamed(context, 'profile');
-
-              nav.push(context, ProfilePage());
+              nav.pushAndReplace(context, ProfilePage());
             },
           ),
         ],
@@ -99,14 +108,13 @@ class _MyDashboardState extends State<MyDashboard> {
             ListTile(
               title: Text('Organization'),
               onTap: () {
-                // Handle option 1
-                Navigator.pop(context); // Close the drawer
+                nav.pushAndReplace(
+                    context, OrganizationPage()); // Close the drawer
               },
             ),
             ListTile(
               title: Text('Statistics'),
               onTap: () {
-                // Handle option 2
                 Navigator.pop(context); // Close the drawer
               },
             ),

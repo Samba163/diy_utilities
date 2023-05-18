@@ -124,7 +124,7 @@ class _MyOtpState extends State<MyOtp> {
 
     final submittedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration?.copyWith(
-        color: Color.fromRGBO(234, 239, 243, 1),
+        color: const Color.fromRGBO(234, 239, 243, 1),
       ),
     );
     String code = "";
@@ -135,34 +135,34 @@ class _MyOtpState extends State<MyOtp> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => goBack(),
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_rounded,
             color: Colors.black,
           ),
         ),
       ),
       body: Container(
-        margin: EdgeInsets.only(left: 25, right: 25),
+        margin: const EdgeInsets.only(left: 25, right: 25),
         alignment: Alignment.center,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/logo.jpg', // Replace with your actual logo image file
+                'assets/images/logoA.png', // Replace with your actual logo image file
                 width: 100,
                 height: 100,
                 // Adjust the width and height according to your needs
               ),
-              SizedBox(height: 40),
-              Text(
+              const SizedBox(height: 40),
+              const Text(
                 'OTP Verification',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Pinput(
                 length: 6,
                 showCursor: true,
@@ -174,7 +174,7 @@ class _MyOtpState extends State<MyOtp> {
                 },
                 controller: _otpController,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   TextButton(
@@ -185,7 +185,7 @@ class _MyOtpState extends State<MyOtp> {
                         (route) => false,
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'Edit phone number',
                       style: TextStyle(color: Colors.black),
                     ),
@@ -234,26 +234,26 @@ class _MyOtpState extends State<MyOtp> {
                       print("wrong otp");
                     }
                   },
-                  child: Text(
-                    'Verify OTP',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
+                  child: const Text(
+                    'Verify OTP',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Visibility(
                 visible:
                     _showInvalidOtpError, // Show the error message if the OTP is invalid
-                child: Text(
+                child: const Text(
                   'Invalid OTP',
                   style: TextStyle(
                     color: Colors.red,
@@ -262,37 +262,37 @@ class _MyOtpState extends State<MyOtp> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Did't Recive the OTP?\nRetry in $_countDown seconds",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
                       ),
                     ),
                   ),
-                  SizedBox(width: 60),
+                  const SizedBox(width: 60),
                   SizedBox(
                     height: 40,
                     width: 110,
                     child: ElevatedButton(
                       onPressed: _isResendEnabled ? resendOTP : null,
-                      child: Text(
-                        'Resend OTP',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
+                      ),
+                      child: const Text(
+                        'Resend OTP',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

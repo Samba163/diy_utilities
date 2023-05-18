@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
       // isPageChanged = false;
     });
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         isLoading = false;
         // isPageChanged = true;
@@ -56,13 +56,13 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
             Navigator.pushNamed(context, "phone");
           },
         ),
-        title: Text(
+        title: const Text(
           "Login",
           style: TextStyle(
             color: Colors.black,
@@ -75,16 +75,16 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Column(
         children: [
-          Image.asset('assets/images/logo.jpg', height: 100, width: 100),
-          SizedBox(height: 70),
-          Text(
+          Image.asset('assets/images/logoA.png', height: 100, width: 100),
+          const SizedBox(height: 70),
+          const Text(
             'Phone Verification',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Container(
             height: 55,
             decoration: BoxDecoration(
@@ -93,15 +93,15 @@ class _LoginPageState extends State<LoginPage> {
             ),
             child: Row(
               children: [
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 SizedBox(
                   width: 40,
                   child: TextField(
                     controller: countrycode,
-                    decoration: InputDecoration(border: InputBorder.none),
+                    decoration: const InputDecoration(border: InputBorder.none),
                   ),
                 ),
-                Text(
+                const Text(
                   "|",
                   style: TextStyle(fontSize: 33, color: Colors.grey),
                 ),
@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           SizedBox(
             height: 50,
             width: 120,
@@ -157,6 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   : null,
               style: ElevatedButton.styleFrom(
+                // ignore: deprecated_member_use
                 primary: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

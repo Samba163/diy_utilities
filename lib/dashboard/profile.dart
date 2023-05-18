@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diy_utilities/constants/constants.dart';
+import 'package:diy_utilities/dashboard/dashboard_home.dart';
 import 'package:diy_utilities/functions/navigate.dart';
 import 'package:diy_utilities/pages/authentication/login.dart';
 import 'package:diy_utilities/providers/user_data_provider.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
@@ -24,9 +26,11 @@ class _ProfilePageState extends State<ProfilePage> {
   late TextEditingController bioController;
   late TextEditingController idController;
   late TextEditingController DoBController;
+  late TextEditingController nameController;
   String designation = "";
   String passionId = "";
   String dob = "";
+  String ename = "";
   DateTime? selectedDate;
   ImagePicker picker = ImagePicker();
   XFile? selectedImage;
@@ -50,12 +54,15 @@ class _ProfilePageState extends State<ProfilePage> {
         Provider.of<UserDataProvider>(context, listen: false).loggedInUserData;
     bioController = TextEditingController(text: currentUserData['designation']);
     idController = TextEditingController(text: currentUserData['passionID']);
+    nameController = TextEditingController(text: currentUserData['name']);
     DoBController = TextEditingController(
         text: _formatDate(currentUserData['dateOfBirth'].toDate()).toString());
 
     designation = currentUserData['designation'];
     passionId = currentUserData['passionID'];
+    ename = currentUserData['name'];
     dob = _formatDate(currentUserData['dateOfBirth'].toDate()).toString();
+    selectedDate = currentUserData['dateOfBirth'].toDate();
 
     // fetchImageUrl();
   }
@@ -148,18 +155,25 @@ class _ProfilePageState extends State<ProfilePage> {
       dataToBeUpdated['designation'] = bioController.text.trim();
     }
     // if (dob != _formatDate(selectedDate).toString()) {
-    if (currentUserData['dateOfBirth'] != selectedDate) {
+    debugPrint(
+        'the change ${currentUserData['dateOfBirth']} and $selectedDate');
+    if (currentUserData['dateOfBirth'].toDate() != selectedDate) {
       dataToBeUpdated['dateOfBirth'] = selectedDate;
     }
     if (passionId != idController.text.trim()) {
       dataToBeUpdated['passionID'] = idController.text.trim();
     }
+    if (ename != nameController.text.trim()) {
+      dataToBeUpdated['name'] = nameController.text.trim();
+    }
     debugPrint('data map $dataToBeUpdated');
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(globalUID)
-        .set(dataToBeUpdated, SetOptions(merge: true));
+    if (dataToBeUpdated.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(globalUID)
+          .set(dataToBeUpdated, SetOptions(merge: true));
+    }
 
     // For demonstration, let's print the entered details
     print('Bio: $bio');
@@ -167,6 +181,9 @@ class _ProfilePageState extends State<ProfilePage> {
     if (selectedImage != null) {
       print('Selected Image: ${selectedImage!.path}');
     }
+    setState(() {
+      dataToBeUpdated.clear();
+    });
   }
 
   void _removeImage() async {
@@ -203,6 +220,24 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Scaffold(
           appBar: AppBar(
             title: Text('Profile Page'),
+            leading: Builder(
+              builder: (BuildContext context) {
+                return IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else {
+                      // Handle the case when there is no previous route
+                      // For example, you can show a dialog or navigate to a default screen
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => MyDashboard()),
+                      );
+                    }
+                  },
+                );
+              },
+            ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.logout),
@@ -252,7 +287,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Text(
+                  const Text(
+                    'Name',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter your name',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  const Text(
                     'Passion ID',
                     style: TextStyle(
                       fontSize: 20,
