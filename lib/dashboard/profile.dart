@@ -248,7 +248,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Handle the case when there is no previous route
                       // For example, you can show a dialog or navigate to a default screen
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => const MyDashboard()),
+                        MaterialPageRoute(
+                            builder: (context) => const MyDashboard()),
                       );
                     }
                   },
@@ -258,7 +259,32 @@ class _ProfilePageState extends State<ProfilePage> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.logout),
-                onPressed: () => _logout(),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure you want to logout?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('No'),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Yes'),
+                            onPressed: () {
+                              _logout(); // Call the logout function
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
