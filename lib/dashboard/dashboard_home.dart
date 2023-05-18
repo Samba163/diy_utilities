@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:diy_utilities/constants/constants.dart';
 import 'package:diy_utilities/dashboard/profile.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import '../functions/navigate.dart';
 
 class MyDashboard extends StatefulWidget {
-  const MyDashboard({super.key});
+  const MyDashboard({Key? key}) : super(key: key);
 
   @override
   State<MyDashboard> createState() => _MyDashboardState();
@@ -14,6 +15,8 @@ class MyDashboard extends StatefulWidget {
 class _MyDashboardState extends State<MyDashboard> {
   Navigation nav = Navigation();
   String? selectedImagePath;
+  String? userProfilePicUrl =
+      'https://firebasestorage.googleapis.com/v0/b/diy-project-c9df6.appspot.com/o/users%2FVzNQTV639NO4361w2ahtRp4RpQW2%2F1684391068420?alt=media&token=b7ed60c2-1b33-4686-9fea-1f48b032c87d'; // Replace with the actual URL of the profile picture
 
   Future<void> scanBarcode(BuildContext context) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -25,7 +28,6 @@ class _MyDashboardState extends State<MyDashboard> {
 
     if (barcodeScanRes != '-1') {
       print('Scanned Data: $barcodeScanRes');
-      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -73,8 +75,6 @@ class _MyDashboardState extends State<MyDashboard> {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              //Navigator.pushReplacementNamed(context, 'profile');
-
               nav.push(context, ProfilePage());
             },
           ),
@@ -88,25 +88,34 @@ class _MyDashboardState extends State<MyDashboard> {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage:
+                        CachedNetworkImageProvider(userProfilePicUrl ?? ''),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Menu',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                ],
               ),
             ),
             ListTile(
               title: Text('Organization'),
               onTap: () {
-                // Handle option 1
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
               title: Text('Statistics'),
               onTap: () {
-                // Handle option 2
                 Navigator.pop(context); // Close the drawer
               },
             ),
