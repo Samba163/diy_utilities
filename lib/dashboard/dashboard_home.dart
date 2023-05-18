@@ -4,7 +4,9 @@ import 'package:diy_utilities/dashboard/organization.dart';
 import 'package:diy_utilities/dashboard/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:provider/provider.dart';
 import '../functions/navigate.dart';
+import '../providers/user_data_provider.dart';
 
 class MyDashboard extends StatefulWidget {
   const MyDashboard({Key? key}) : super(key: key);
@@ -67,6 +69,8 @@ class _MyDashboardState extends State<MyDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    var currentUserData = context.watch<UserDataProvider>().loggedInUserData;
+
     return Scaffold(
       endDrawer: ProfilePage(),
       endDrawerEnableOpenDragGesture: true,
@@ -102,19 +106,8 @@ class _MyDashboardState extends State<MyDashboard> {
                 color: Colors.blue,
               ),
               child: Column(
-<<<<<<< Updated upstream
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage:
-                        CachedNetworkImageProvider(userProfilePicUrl ?? ''),
-                  ),
-                  SizedBox(height: 8),
-=======
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
->>>>>>> Stashed changes
                   Text(
                     'Menu',
                     style: TextStyle(
@@ -122,14 +115,12 @@ class _MyDashboardState extends State<MyDashboard> {
                       fontSize: 24,
                     ),
                   ),
-<<<<<<< Updated upstream
-=======
-                  SizedBox(height: 10),
+                  SizedBox(height: 8),
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage: AssetImage('assets/images/default.jpg'),
+                    backgroundImage:
+                        CachedNetworkImageProvider(userProfilePicUrl ?? ''),
                   ),
->>>>>>> Stashed changes
                 ],
               ),
             ),
