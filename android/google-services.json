@@ -22,14 +22,6 @@
           }
         },
         {
-          "client_id": "302206630828-l0npvkk5q80hf705v7kl5urfi1m5an6h.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.diy_utilities",
-            "certificate_hash": "e46df286017aea34b8d0a839755e1dbad27052c0"
-          }
-        },
-        {
           "client_id": "302206630828-vq2chdug4ef20np0or48qn1ugmtuaqor.apps.googleusercontent.com",
           "client_type": 3
         }
