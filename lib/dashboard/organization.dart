@@ -36,7 +36,11 @@ class _OrganizationPageState extends State<OrganizationPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("ORGANIZATION"),
+        title: const Text(
+          "ORGANIZATION",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: Colors.black,

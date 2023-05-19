@@ -236,11 +236,17 @@ class _ProfilePageState extends State<ProfilePage> {
         widthFactor: 0.8,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Profile Page'),
+            title: const Text(
+              'Profile Page',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Colors.white,
             leading: Builder(
               builder: (BuildContext context) {
                 return IconButton(
                   icon: const Icon(Icons.arrow_back),
+                  color: Colors.black,
                   onPressed: () {
                     if (Navigator.of(context).canPop()) {
                       Navigator.of(context).pop();
@@ -259,6 +265,7 @@ class _ProfilePageState extends State<ProfilePage> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.logout),
+                color: Colors.black,
                 onPressed: () {
                   showDialog(
                     context: context,

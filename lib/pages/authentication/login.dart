@@ -125,6 +125,23 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           const SizedBox(height: 20),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  "login",
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                'Edit phone number',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           SizedBox(
             height: 50,
             width: 120,
