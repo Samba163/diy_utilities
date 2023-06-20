@@ -13,7 +13,7 @@ import 'login.dart';
 class MyOtp extends StatefulWidget {
   final ValueChanged onPressed;
 
-  const MyOtp({super.key, required this.onPressed});
+  const MyOtp({ Key? key, required this.onPressed}) : super(key: key);
 
   @override
   State<MyOtp> createState() => _MyOtpState();

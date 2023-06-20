@@ -11,7 +11,9 @@ import 'constants/constants.dart';
 import 'functions/navigate.dart';
 
 class LoadingPage extends StatefulWidget {
-  const LoadingPage({super.key});
+  const LoadingPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();

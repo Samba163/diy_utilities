@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../functions/navigate.dart';
 
 class OrganizationPage extends StatefulWidget {
-  const OrganizationPage({super.key});
+  const OrganizationPage({Key? key}) : super(key: key);
 
   @override
   State<OrganizationPage> createState() => _OrganizationPageState();
